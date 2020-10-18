@@ -146,3 +146,15 @@ def server_add_user(user_id, server_id):
                                                        "ARRY": 0,
                                                        "HYLN": 0,
                                                        "WKHS": 0, }}})
+
+
+def set_stock(user_id, server_id, stock, quantity):
+    updated_stock = "portfolio." + str(server_id) + "." + stock
+    collection.update_one({"_id": user_id}, {"$set": {updated_stock: quantity} })
+
+
+def get_stock(user_id, server_id, stock, quantity):
+
+
+def set_balance(user_id, server_id, balance):
+
