@@ -7,4 +7,18 @@ cluster = MongoClient(DATABASE)
 db = cluster[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-collection.insert_one({"_id": 0, "name": "test"})
+post = {
+    "_id": 0,
+    "cash_balances": {
+        "Server_0": 10000,
+        "Server_1": 10000,
+        "Server_2": 10000,
+    },
+    "portfolios": {
+        "AAPL": 0,
+        "GOOG": 0,
+        "AMZN": 0,
+    },
+}
+
+collection.insert_one(post)
