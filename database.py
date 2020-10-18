@@ -15,9 +15,23 @@ post = {
         "Server_2": 10000,
     },
     "portfolios": {
-        "AAPL": 0,
-        "GOOG": 0,
-        "AMZN": 0,
+        "Server_0": {
+            "AAPL": 0,
+            "GOOG": 0,
+            "AMZN": 0,
+        },
+        "Server_1": {
+            "AAPL": 0,
+            "GOOG": 0,
+            "AMZN": 0,
+        },
+        "Server_2": {
+            "AAPL": 0,
+            "GOOG": 0,
+            "AMZN": 0,
+        },
+
+
     },
 }
 
