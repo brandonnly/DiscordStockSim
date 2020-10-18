@@ -6,4 +6,3 @@ def price (stock):
     numbers = finnhub_client.quote(stock)
     return numbers["c"]
 
-print (price(("AAPL"))) 
