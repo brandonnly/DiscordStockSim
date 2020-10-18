@@ -54,8 +54,10 @@ def set_stock(user_id, server_id, stock, quantity):
 
 def get_stock(user_id, server_id, stock):
     portfolio = str(user_id) + ".portfolio." + str(server_id)
-    stocks = collection.find_one({"_id": "123.234"})
-    return stocks
+    user = collection.find_one({"_id": user_id})
+    portfolio = user['portfolio']
+    server = portfolio[str(server_id)]
+    return server[stock]
 
 
 def set_balance(user_id, server_id, balance):
@@ -66,8 +68,6 @@ def set_balance(user_id, server_id, balance):
 
 def get_balance(user_id, server_id):
     balance_to_find = str(user_id) + ".cash_balances." + str(server_id)
-    return collection.find(balance_to_find)
-
-
-print(get_stock(123, 234, "AAPL"))
-# print(get_balance(123, 234))
+    user = collection.find_one({"_id": user_id})
+    balance = user['cash_balances']
+    return balance[str(server_id)]
