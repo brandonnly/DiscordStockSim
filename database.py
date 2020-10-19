@@ -12,38 +12,42 @@ def new_user(user_id):
 
 
 def add_user(user_id, server_id):
-    cash_balance = "cash_balances." + str(server_id)
-    portfolio = "portfolio." + str(server_id)
-    collection.update_one({"_id": user_id}, {"$set": {cash_balance: default_balance}})
-    collection.update_one({"_id": user_id}, {"$set": {portfolio: {"AAPL": 0,
-                                                                  "MSFT": 0,
-                                                                  "AMZN": 0,
-                                                                  "GOOG": 0,
-                                                                  "FB": 0,
-                                                                  "TSLA": 0,
-                                                                  "TSM": 0,
-                                                                  "NVDA": 0,
-                                                                  "PFE": 0,
-                                                                  "T": 0,
-                                                                  "ZM": 0,
-                                                                  "AMD": 0,
-                                                                  "BA": 0,
-                                                                  "SQ": 0,
-                                                                  "GE": 0,
-                                                                  "ADSK": 0,
-                                                                  "VRTX": 0,
-                                                                  "PTON": 0,
-                                                                  "NIO": 0,
-                                                                  "F": 0,
-                                                                  "CHWY": 0,
-                                                                  "PLTR": 0,
-                                                                  "NET": 0,
-                                                                  "DKNG": 0,
-                                                                  "FSLY": 0,
-                                                                  "ARRY": 0,
-                                                                  "HYLN": 0,
-                                                                  "WKHS": 0, }}})
-    print("Added server", server_id, "portfolio to user", user_id)
+    users = collection.find({"_id": user_id})
+    if users is None:
+        new_user(user_id)
+    else:
+        cash_balance = "cash_balances." + str(server_id)
+        portfolio = "portfolio." + str(server_id)
+        collection.update_one({"_id": user_id}, {"$set": {cash_balance: default_balance}})
+        collection.update_one({"_id": user_id}, {"$set": {portfolio: {"AAPL": 0,
+                                                                      "MSFT": 0,
+                                                                      "AMZN": 0,
+                                                                      "GOOG": 0,
+                                                                      "FB": 0,
+                                                                      "TSLA": 0,
+                                                                      "TSM": 0,
+                                                                      "NVDA": 0,
+                                                                      "PFE": 0,
+                                                                      "T": 0,
+                                                                      "ZM": 0,
+                                                                      "AMD": 0,
+                                                                      "BA": 0,
+                                                                      "SQ": 0,
+                                                                      "GE": 0,
+                                                                      "ADSK": 0,
+                                                                      "VRTX": 0,
+                                                                      "PTON": 0,
+                                                                      "NIO": 0,
+                                                                      "F": 0,
+                                                                      "CHWY": 0,
+                                                                      "PLTR": 0,
+                                                                      "NET": 0,
+                                                                      "DKNG": 0,
+                                                                      "FSLY": 0,
+                                                                      "ARRY": 0,
+                                                                      "HYLN": 0,
+                                                                      "WKHS": 0, }}})
+        print("Added server", server_id, "portfolio to user", user_id)
 
 
 def set_stock(user_id, server_id, stock, quantity):
@@ -71,3 +75,4 @@ def get_balance(user_id, server_id):
     user = collection.find_one({"_id": user_id})
     balance = user['cash_balances']
     return balance[str(server_id)]
+
