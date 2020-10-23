@@ -91,4 +91,29 @@ async def sell(ctx):
 
         await ctx.send("You sold **{0}** shares of **{1}** at **${2}** per share.".format(quantity, stock, stock_price))
 
+
+@bot.command()
+async def balance(ctx):
+    """
+    Tells the user their balance in that server
+    """
+    await ctx.send("**Current Balance:** ${0}".format(round(get_balance(ctx.author.id, ctx.guild.id), 2)))
+
+
+@bot.command()
+async def price(ctx):
+    """
+    Tells the user the price of a stock given its ticker symbol
+    """
+    pass
+
+
+@bot.command()
+async def portfolio(ctx):
+    """
+    Gives an overview of the users entire portfolio
+    """
+    pass
+
+
 bot.run(BOT_TOKEN)
