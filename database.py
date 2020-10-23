@@ -1,3 +1,7 @@
+"""
+Database functions for interacting with the backend
+"""
+
 from pymongo import MongoClient
 from settings import *
 

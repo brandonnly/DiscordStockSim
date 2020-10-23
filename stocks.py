@@ -1,3 +1,7 @@
+"""
+All stock functions for getting information from the finnhub api
+"""
+
 import finnhub
 from settings import *
 

@@ -1,3 +1,6 @@
+"""
+Main file for the bot and its commands
+"""
 import discord
 from discord.ext import commands
 from settings import *
