@@ -14,13 +14,11 @@ def new_user(user_id):
 
 
 def add_user(user_id, server_id):
-    users = collection.find({"_id": user_id})
-    try:
+    users = collection.find_one({"_id": user_id})
+    if not user_exists(user_id):
         new_user(user_id)
-    except DuplicateKeyError:
-        pass
 
-    try:
+    if not portfolio_exists(user_id, server_id):
         cash_balance = "cash_balances." + str(server_id)
         portfolio = "portfolio." + str(server_id)
         collection.update_one({"_id": user_id}, {"$set": {cash_balance: default_balance}})
@@ -53,8 +51,6 @@ def add_user(user_id, server_id):
                                                                       "HYLN": 0,
                                                                       "WKHS": 0, }}})
         print("Added server", server_id, "portfolio to user", user_id)
-    except DuplicateKeyError:
-        pass
 
 
 def set_stock(user_id, server_id, stock, quantity):
@@ -83,3 +79,21 @@ def get_balance(user_id, server_id):
     balance = user['cash_balances']
     return balance[str(server_id)]
 
+
+def user_exists(user_id):
+    users = collection.find_one({"_id": user_id})
+    if users is None:
+        return False
+    else:
+        return True
+
+
+def portfolio_exists(user_id, server_id):
+    portfolio = str(user_id) + ".portfolio." + str(server_id)
+    user = collection.find_one({"_id": user_id})
+    portfolio = user['portfolio']
+    try:
+        server = portfolio[str(server_id)]
+        return True
+    except KeyError:
+        return False

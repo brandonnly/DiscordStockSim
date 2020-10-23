@@ -13,9 +13,11 @@ async def join(ctx):
     """
     Adds user to the server game
     """
-    new_user(ctx.author.id)
     add_user(ctx.author.id, ctx.guild.id)
-    await ctx.send('you are now in stonks kekw')
+    if portfolio_exists(ctx.author.id, ctx.guild.id):
+        await ctx.send("you're already in this servers stonks lulw")
+    else:
+        await ctx.send('you are now in stonks kekw')
 
 
 @bot.command()
@@ -40,13 +42,18 @@ async def buy(ctx):
     stock_price = price(stock)
     cost = stock_price * int(quantity)
 
-    # sets the balance to current balance minus cost
-    set_balance(author, server, get_balance(author, server) - cost)
+    # checks if balance will go into negatives
+    if (get_balance(author, server) - cost) < 0:
+        await ctx.send("You don't have the funds for that!")
 
-    # gives the user the quantity of stock
-    set_stock(author, server, stock, int(get_stock(author, server, stock)) + int(quantity))
+    else:
+        # sets the balance to current balance minus cost
+        set_balance(author, server, get_balance(author, server) - cost)
 
-    await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock, stock_price))
+        # gives the user the quantity of stock
+        set_stock(author, server, stock, int(get_stock(author, server, stock)) + int(quantity))
+
+        await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock, stock_price))
 
 
 bot.run(BOT_TOKEN)
