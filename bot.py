@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from settings import *
 from database import *
-from datascraping import *
+from stocks import *
 import re
 
 bot = discord.ext.commands.Bot('s!')

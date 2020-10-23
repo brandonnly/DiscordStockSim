@@ -1,6 +1,4 @@
 from pymongo import MongoClient
-from pymongo.errors import *
-
 from settings import *
 
 cluster = MongoClient(DATABASE)
