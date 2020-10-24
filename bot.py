@@ -92,11 +92,12 @@ async def balance(ctx):
 
 
 @bot.command()
-async def price(ctx):
+async def price(ctx, stock_ticker):
     """
     Tells the user the price of a stock given its ticker symbol
     """
-    pass
+    stock_ticker = stock_ticker.upper()
+    await ctx.send("Current **{0}** share value: **${1}**".format(stock_ticker, get_price(stock_ticker)))
 
 
 @bot.command()
