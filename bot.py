@@ -110,7 +110,12 @@ async def portfolio(ctx):
     """
     Returns an overview of your portfolio
     """
-
+    users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
+    message = "**{0}'s** portfolio for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
+    for stock_ticker in users_portfolio:
+        message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
+    message = message + "```"
+    await ctx.send(message)
 
 
 bot.run(BOT_TOKEN)
