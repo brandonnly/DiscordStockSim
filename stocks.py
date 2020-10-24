@@ -9,7 +9,6 @@ from settings import *
 finnhub_client = finnhub.Client(api_key=FINHUB_API_KEY)
 
 
-def price(stock):
-    numbers = finnhub_client.quote(stock)
-    return numbers["c"]
-
+def get_price(stock_ticker):
+    stock_info = finnhub_client.quote(stock_ticker)
+    return stock_info['c']
