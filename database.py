@@ -144,3 +144,18 @@ def portfolio_exists(user_id, server_id):
         return True
     except KeyError:
         return False
+
+
+def get_portfolio(user_id, server_id):
+    """
+    Returns the users whole portfolio in the server as a dictionary
+    :param user_id: the users unique ID
+    :param server_id: the servers unique ID
+    :return: dictionary containing their portfolio
+    """
+    user = collection.find_one({"_id": user_id})
+    portfolio = user['portfolio']
+    return portfolio[str(server_id)]
+
+
+print(get_portfolio(123, 234))

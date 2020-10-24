@@ -110,7 +110,7 @@ async def portfolio(ctx):
     """
     Returns an overview of your portfolio
     """
-    pass
+
 
 
 bot.run(BOT_TOKEN)
