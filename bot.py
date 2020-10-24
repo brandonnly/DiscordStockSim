@@ -15,7 +15,7 @@ bot = discord.ext.commands.Bot('s!')
 @bot.command()
 async def join(ctx):
     """
-    Adds user to the server game
+    Enters you into this servers stonks game
     """
     add_user(ctx.author.id, ctx.guild.id)
     # checks if the user is already in the servers game
@@ -29,6 +29,8 @@ async def join(ctx):
 async def buy(ctx, stock_ticker, quantity):
     """
     Performs a market buy of the quantity of the given stock
+    :param stock_ticker: the ticker symbol of the stock
+    :param quantity: the integer quantity to buy
     """
     # gets author and server id's
     author = ctx.author.id
@@ -58,6 +60,8 @@ async def buy(ctx, stock_ticker, quantity):
 async def sell(ctx, stock_ticker, quantity):
     """
     Performs a market sell of the quantity of the given stock
+    :param stock_ticker: the ticker symbol of the stock
+    :param quantity: the integer quantity to sell
     """
     # get author and server id's
     author = ctx.author.id
@@ -86,7 +90,7 @@ async def sell(ctx, stock_ticker, quantity):
 @bot.command()
 async def balance(ctx):
     """
-    Tells the user their balance in that server
+    Returns your current balance
     """
     await ctx.send("**Current Balance:** ${0}".format(round(get_balance(ctx.author.id, ctx.guild.id), 2)))
 
@@ -94,7 +98,8 @@ async def balance(ctx):
 @bot.command()
 async def price(ctx, stock_ticker):
     """
-    Tells the user the price of a stock given its ticker symbol
+    Returns the current share price of the given stock
+    :param stock_ticker: the ticker symbol of the stock to check
     """
     stock_ticker = stock_ticker.upper()
     await ctx.send("Current **{0}** share value: **${1}**".format(stock_ticker, get_price(stock_ticker)))
@@ -103,7 +108,7 @@ async def price(ctx, stock_ticker):
 @bot.command()
 async def portfolio(ctx):
     """
-    Gives an overview of the users entire portfolio
+    Returns an overview of your portfolio
     """
     pass
 
