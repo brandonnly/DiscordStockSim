@@ -156,6 +156,3 @@ def get_portfolio(user_id, server_id):
     user = collection.find_one({"_id": user_id})
     portfolio = user['portfolio']
     return portfolio[str(server_id)]
-
-
-print(get_portfolio(123, 234))
