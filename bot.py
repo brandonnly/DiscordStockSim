@@ -163,14 +163,20 @@ async def portfolio(ctx):
     Returns the users portfolio
     :param ctx: pass context
     """
+
+    author_id = ctx.author.id
+    author_name = ctx.author.name
+    server_id = ctx.guild.id
+    server_name = ctx.guild.name
+
     # gets the users portfolio
-    users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
+    users_portfolio = get_portfolio(author_id, server_id)
 
     # portfolio variables
     value = 0
     quantity = 0
     stocks = 0
-    cash_balance = round(get_balance(ctx.author.id, ctx.guild.id), 2)
+    cash_balance = round(get_balance(author_id, server_id), 2)
 
     # loop through users portfolio and add to counters
     for stock_ticker in users_portfolio:
@@ -181,7 +187,7 @@ async def portfolio(ctx):
         stocks += 1
 
     # sends the users portfolio
-    message = "**{0}'s** portfolio for **{1}**:\n```py\n".format(ctx.author.name, ctx.guild.name)
+    message = "**{0}'s** portfolio for **{1}**:\n```py\n".format(author_name, server_name)
     message = message + "Portfolio Value = ${0} \n\nCash Balance = ${1} \nStonks Value = ${2}".format(cash_balance +
                                                                                                       value,
                                                                                                       cash_balance,
