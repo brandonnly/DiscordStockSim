@@ -44,25 +44,28 @@ async def buy(ctx, stock_ticker, quantity):
     stock_ticker = stock_ticker.upper()
     quantity = int(quantity)
 
-    # get stock price and calculate total cost
-    stock_price = get_price(stock_ticker)
-    cost = stock_price * quantity
-
-    # checks if balance will go into negatives
-    if (get_balance(author, server) - cost) < 0:
-        await ctx.send("You don't have the funds for that!")
+    if get_price(stock_ticker) == 0:
+        await ctx.send("that stock doesn't exist 5head")
     else:
-        # sets the balance to current balance minus cost
-        set_balance(author, server, get_balance(author, server) - cost)
-        # gives the user the quantity of stock
-        try:
-            set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
-        except KeyError:
-            add_portfolio(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+        # get stock price and calculate total cost
+        stock_price = get_price(stock_ticker)
+        cost = stock_price * quantity
 
-        await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock_ticker,
-                                                                                             stock_price))
-        await balance(ctx)
+        # checks if balance will go into negatives
+        if (get_balance(author, server) - cost) < 0:
+            await ctx.send("You don't have the funds for that!")
+        else:
+            # sets the balance to current balance minus cost
+            set_balance(author, server, get_balance(author, server) - cost)
+            # gives the user the quantity of stock
+            try:
+                set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+            except KeyError:
+                add_portfolio(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+
+            await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock_ticker,
+                                                                                                 stock_price))
+            await balance(ctx)
 
 
 @bot.command()
@@ -79,22 +82,25 @@ async def sell(ctx, stock_ticker, quantity):
     stock_ticker = stock_ticker.upper()
     quantity = int(quantity)
 
-    # get price of the stock
-    stock_price = get_price(stock_ticker)
-    cost = stock_price * quantity
-
-    # checks if stock will go into negative
-    if (get_stock(author, server, stock_ticker) - quantity) < 0:
-        await ctx.send("You don't have that many shares of **{0}**.".format(stock_ticker))
+    if get_price(stock_ticker) == 0:
+        await ctx.send("that stock doesn't exist 5head")
     else:
-        # subtracts quantity of stock from the users inventory
-        set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) - quantity)
-        # adds the cost of the stocks to the users inventory
-        set_balance(author, server, get_balance(author, server) + cost)
+        # get price of the stock and calculate total cost
+        stock_price = get_price(stock_ticker)
+        cost = stock_price * quantity
 
-        await ctx.send("You sold **{0}** shares of **{1}** at **${2}** per share.".format(quantity, stock_ticker,
-                                                                                          stock_price))
-        await balance(ctx)
+        # checks if stock will go into negative
+        if (get_stock(author, server, stock_ticker) - quantity) < 0:
+            await ctx.send("You don't have that many shares of **{0}**.".format(stock_ticker))
+        else:
+            # subtracts quantity of stock from the users inventory
+            set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) - quantity)
+            # adds the cost of the stocks to the users inventory
+            set_balance(author, server, get_balance(author, server) + cost)
+
+            await ctx.send("You sold **{0}** shares of **{1}** at **${2}** per share.".format(quantity, stock_ticker,
+                                                                                              stock_price))
+            await balance(ctx)
 
 
 @bot.command()
