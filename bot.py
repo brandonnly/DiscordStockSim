@@ -21,14 +21,14 @@ async def join(ctx):
     # checks if the user is already in the servers game
     try:
         if balance_exists(ctx.author.id, ctx.guild.id):
-            await ctx.send("you're already in this servers stonks lulw")
+            await ctx.send(already_in_stonks)
         else:
             add_user(ctx.author.id, ctx.guild.id)
-            await ctx.send('you are now in stonks kekw')
+            await ctx.send(joined_stonks)
     # type error means that no object for the users balance exists
     except TypeError:
         add_user(ctx.author.id, ctx.guild.id)
-        await ctx.send('you are now in stonks kekw')
+        await ctx.send(joined_stonks)
 
 
 @bot.command()
@@ -47,7 +47,7 @@ async def buy(ctx, stock_ticker, quantity):
 
     # checks if the stock is a valid symbol - get_price returns 0 if not valid
     if get_price(stock_ticker) == 0:
-        await ctx.send("that stock doesn't exist 5head")
+        await ctx.send(invalid_stonk)
     else:
         # get stock price and calculate total cost
         stock_price = get_price(stock_ticker)
@@ -55,7 +55,7 @@ async def buy(ctx, stock_ticker, quantity):
 
         # checks if balance will go into negatives
         if (get_balance(author, server) - cost) < 0:
-            await ctx.send("You don't have the funds for that!")
+            await ctx.send(too_broke)
         else:
             # sets the balance to current balance minus cost
             set_balance(author, server,  get_balance(author, server) - cost)
@@ -67,8 +67,7 @@ async def buy(ctx, stock_ticker, quantity):
                 add_portfolio(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
 
             # lets the user know how much they bought at what price and their balance afterwards
-            await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock_ticker,
-                                                                                                 stock_price))
+            await ctx.send(bought_stonks.format(quantity, stock_ticker, stock_price))
             await balance(ctx)
 
 
@@ -88,7 +87,7 @@ async def sell(ctx, stock_ticker, quantity):
 
     # checks if the stock is a valid symbol - get_price returns 0 if not valid
     if get_price(stock_ticker) == 0:
-        await ctx.send("that stock doesn't exist 5head")
+        await ctx.send(invalid_stonk)
     else:
         # get price of the stock and calculate total cost
         stock_price = get_price(stock_ticker)
@@ -96,7 +95,7 @@ async def sell(ctx, stock_ticker, quantity):
 
         # checks if stock will go into negative
         if (get_stock(author, server, stock_ticker) - quantity) < 0:
-            await ctx.send("you don't have that many shares of **{0}** pepeHands".format(stock_ticker))
+            await ctx.send(not_enough_stonks.format(stock_ticker))
         else:
             # subtracts quantity of stock from the users inventory
             set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) - quantity)
@@ -104,8 +103,7 @@ async def sell(ctx, stock_ticker, quantity):
             set_balance(author, server, get_balance(author, server) + cost)
 
             # lets the user know how much they bought at what price and their balance afterwards
-            await ctx.send("You sold **{0}** shares of **{1}** at **${2}** per share.".format(quantity, stock_ticker,
-                                                                                              stock_price))
+            await ctx.send(sold_stonks.format(quantity, stock_ticker, stock_price))
             await balance(ctx)
 
 
@@ -127,9 +125,9 @@ async def price(ctx, stock_ticker):
     """
     stock_ticker = stock_ticker.upper()
     if get_price(stock_ticker) == 0:
-        await ctx.send("that stock doesn't exist 5head")
+        await ctx.send(invalid_stonk)
     else:
-        await ctx.send("Current **{0}** share value: **${1}**".format(stock_ticker, get_price(stock_ticker)))
+        await ctx.send(current_stonk_value.format(stock_ticker, get_price(stock_ticker)))
 
 
 @bot.command()
@@ -149,13 +147,13 @@ async def portfolio(ctx):
 
         # check if the message has no stocks and is just the template
         if len(message) == 83:
-            await ctx.send("you don't own anything sadge")
+            await ctx.send(no_stonks)
         else:
             await ctx.send(message)
 
     # KeyError means that the portfolio doesn't exist at all
     except KeyError:
-        await ctx.send("you don't own anything sadge")
+        await ctx.send(no_stonks)
 
 
 bot.run(BOT_TOKEN)
