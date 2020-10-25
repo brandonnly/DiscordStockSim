@@ -18,11 +18,15 @@ async def join(ctx):
     Enters you into this servers stonks game
     :param ctx: pass context
     """
-    add_user(ctx.author.id, ctx.guild.id)
     # checks if the user is already in the servers game
-    if portfolio_exists(ctx.author.id, ctx.guild.id):
-        await ctx.send("you're already in this servers stonks lulw")
-    else:
+    try:
+        if balance_exists(ctx.author.id, ctx.guild.id):
+            await ctx.send("you're already in this servers stonks lulw")
+        else:
+            add_user(ctx.author.id, ctx.guild.id)
+            await ctx.send('you are now in stonks kekw')
+    except TypeError:
+        add_user(ctx.author.id, ctx.guild.id)
         await ctx.send('you are now in stonks kekw')
 
 
@@ -51,7 +55,10 @@ async def buy(ctx, stock_ticker, quantity):
         # sets the balance to current balance minus cost
         set_balance(author, server, get_balance(author, server) - cost)
         # gives the user the quantity of stock
-        set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+        try:
+            set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+        except KeyError:
+            add_portfolio(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
 
         await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock_ticker,
                                                                                              stock_price))
@@ -116,12 +123,15 @@ async def portfolio(ctx):
     Returns an overview of your portfolio
     :param ctx: pass context
     """
-    users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
-    message = "**{0}'s** portfolio for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
-    for stock_ticker in users_portfolio:
-        message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
-    message = message + "```"
-    await ctx.send(message)
+    try:
+        users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
+        message = "**{0}'s** portfolio for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
+        for stock_ticker in users_portfolio:
+            message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
+        message = message + "```"
+        await ctx.send(message)
+    except KeyError:
+        await ctx.send("you don't own anything sadge")
 
 
 bot.run(BOT_TOKEN)
