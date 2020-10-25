@@ -25,7 +25,6 @@ def add_user(user_id, server_id):
     :param user_id: the users unique ID
     :param server_id: the servers unique ID
     """
-    users = collection.find_one({"_id": user_id})
     if not user_exists(user_id):
         new_user(user_id)
 
@@ -130,6 +129,20 @@ def user_exists(user_id):
         return True
 
 
+def has_portfolio(user_id):
+    """
+    Checks if the user has a portfolio
+    :param user_id:the users unique ID
+    :return: boolean value
+    """
+    user = collection.find_one({"_id": user_id})
+    try:
+        portfolio = user['portfolio']
+        return True
+    except KeyError:
+        return False
+
+
 def portfolio_exists(user_id, server_id):
     """
     Checks if the user already has a portfolio in the server
@@ -137,12 +150,15 @@ def portfolio_exists(user_id, server_id):
     :param server_id: the servers unique ID
     :return: boolean value
     """
-    user = collection.find_one({"_id": user_id})
-    portfolio = user['portfolio']
-    try:
-        server = portfolio[str(server_id)]
-        return True
-    except KeyError:
+    if has_portfolio(user_id):
+        user = collection.find_one({"_id": user_id})
+        portfolio = user['portfolio']
+        try:
+            server = portfolio[str(server_id)]
+            return True
+        except KeyError:
+            return False
+    else:
         return False
 
 
