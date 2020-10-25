@@ -126,7 +126,10 @@ async def price(ctx, stock_ticker):
     :param stock_ticker: the ticker symbol of the stock to check
     """
     stock_ticker = stock_ticker.upper()
-    await ctx.send("Current **{0}** share value: **${1}**".format(stock_ticker, get_price(stock_ticker)))
+    if get_price(stock_ticker) == 0:
+        await ctx.send("that stock doesn't exist 5head")
+    else:
+        await ctx.send("Current **{0}** share value: **${1}**".format(stock_ticker, get_price(stock_ticker)))
 
 
 @bot.command()
