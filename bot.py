@@ -8,7 +8,6 @@ from settings import *
 from database import *
 from stocks import *
 
-
 bot = discord.ext.commands.Bot('s!')
 
 
@@ -58,7 +57,7 @@ async def buy(ctx, stock_ticker, quantity):
             await ctx.send(too_broke)
         else:
             # sets the balance to current balance minus cost
-            set_balance(author, server,  get_balance(author, server) - cost)
+            set_balance(author, server, get_balance(author, server) - cost)
             # gives the user the quantity of stock
             try:
                 set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
@@ -133,7 +132,7 @@ async def price(ctx, stock_ticker):
 @bot.command()
 async def stonks(ctx):
     """
-    Returns an overview of your portfolio
+    Returns an overview of all your owned stonks
     :param ctx: pass context
     """
     try:
@@ -142,11 +141,13 @@ async def stonks(ctx):
         message = "**{0}'s** stonks for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
         # loops through the users portfolio and adds them to the message
         for stock_ticker in users_portfolio:
-            message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
+            quantity = users_portfolio[stock_ticker]
+            message = message + "{0}: {1} - valued at ${2}\n".format(stock_ticker, quantity, (get_price(stock_ticker) *
+                                                                                              quantity))
         message = message + "```"
 
         # check if the message has no stocks and is just the template
-        if len(message) == 83:
+        if len(message) == 80:
             await ctx.send(no_stonks)
         else:
             await ctx.send(message)
