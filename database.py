@@ -25,43 +25,37 @@ def add_user(user_id, server_id):
     :param user_id: the users unique ID
     :param server_id: the servers unique ID
     """
-    users = collection.find_one({"_id": user_id})
+    # adds the user to the databse if they don't exist already
     if not user_exists(user_id):
         new_user(user_id)
 
-    if not portfolio_exists(user_id, server_id):
+    # adds the users balance to the server
+    if not balance_exists(user_id, server_id):
         cash_balance = "cash_balances." + str(server_id)
-        portfolio = "portfolio." + str(server_id)
         collection.update_one({"_id": user_id}, {"$set": {cash_balance: default_balance}})
-        collection.update_one({"_id": user_id}, {"$set": {portfolio: {"AAPL": 0,
-                                                                      "MSFT": 0,
-                                                                      "AMZN": 0,
-                                                                      "GOOG": 0,
-                                                                      "FB": 0,
-                                                                      "TSLA": 0,
-                                                                      "TSM": 0,
-                                                                      "NVDA": 0,
-                                                                      "PFE": 0,
-                                                                      "T": 0,
-                                                                      "ZM": 0,
-                                                                      "AMD": 0,
-                                                                      "BA": 0,
-                                                                      "SQ": 0,
-                                                                      "GE": 0,
-                                                                      "ADSK": 0,
-                                                                      "VRTX": 0,
-                                                                      "PTON": 0,
-                                                                      "NIO": 0,
-                                                                      "F": 0,
-                                                                      "CHWY": 0,
-                                                                      "PLTR": 0,
-                                                                      "NET": 0,
-                                                                      "DKNG": 0,
-                                                                      "FSLY": 0,
-                                                                      "ARRY": 0,
-                                                                      "HYLN": 0,
-                                                                      "WKHS": 0, }}})
         print("Added server", server_id, "portfolio to user", user_id)
+
+
+def add_portfolio(user_id, server_id, stock, quantity):
+    """
+    Adds a portfolio to the user if they currently have no stocks.
+    :param user_id: the users unique ID
+    :param server_id: the servers unique ID
+    :param stock: stock ticker symbol
+    :param quantity: quantity of stock to add
+    """
+    portfolio = "portfolio." + str(server_id)
+    collection.update_one({"_id": user_id}, {"$set": {portfolio: {stock: quantity}}})
+
+
+def delete_portfolio(user_id, server_id):
+    """
+    Removes the users portfolio
+    :param user_id: the users unique ID
+    :param server_id: the servers unique ID
+    """
+    portfolio = str(user_id) + ".portfolio." + str(server_id)
+    collection.delete_one({portfolio})
 
 
 def set_stock(user_id, server_id, stock, quantity):
@@ -73,8 +67,12 @@ def set_stock(user_id, server_id, stock, quantity):
     :param quantity: the number to set to
     """
     updated_stock = "portfolio." + str(server_id) + "." + stock
-    collection.update_one({"_id": user_id}, {"$set": {updated_stock: quantity}})
-    print("Set the stock of", user_id, "in", server_id, "to", quantity, "for stock", stock)
+    # removes the stock from the array if setting quantity to 0
+    if quantity == 0:
+        collection.update_one({"_id": user_id}, {"$unset": {updated_stock: quantity}})
+    else:
+        collection.update_one({"_id": user_id}, {"$set": {updated_stock: quantity}})
+        print("Set the stock of", user_id, "in", server_id, "to", quantity, "for stock", stock)
 
 
 def get_stock(user_id, server_id, stock):
@@ -85,11 +83,14 @@ def get_stock(user_id, server_id, stock):
     :param stock: the stock ticker symbol
     :return: the integer value of the users owned shared
     """
-    portfolio = str(user_id) + ".portfolio." + str(server_id)
     user = collection.find_one({"_id": user_id})
-    portfolio = user['portfolio']
-    server = portfolio[str(server_id)]
-    return server[stock]
+    try:
+        portfolio = user['portfolio']
+        server = portfolio[str(server_id)]
+        return server[stock]
+    # KeyError means that the user doesn't own any of the stock
+    except KeyError:
+        return 0
 
 
 def set_balance(user_id, server_id, balance):
@@ -111,7 +112,6 @@ def get_balance(user_id, server_id):
     :param server_id: the servers unique ID
     :return: the floating value of the users balance
     """
-    balance_to_find = str(user_id) + ".cash_balances." + str(server_id)
     user = collection.find_one({"_id": user_id})
     balance = user['cash_balances']
     return balance[str(server_id)]
@@ -130,17 +130,17 @@ def user_exists(user_id):
         return True
 
 
-def portfolio_exists(user_id, server_id):
+def balance_exists(user_id, server_id):
     """
-    Checks if the user already has a portfolio in the server
+    Checks if the user has a balance in the server
     :param user_id: the users unique ID
     :param server_id: the servers unique ID
     :return: boolean value
     """
     user = collection.find_one({"_id": user_id})
-    portfolio = user['portfolio']
     try:
-        server = portfolio[str(server_id)]
+        balance = user['cash_balances']
+        server = balance[str(server_id)]
         return True
     except KeyError:
         return False
