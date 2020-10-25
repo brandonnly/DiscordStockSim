@@ -25,10 +25,12 @@ def add_user(user_id, server_id):
     :param user_id: the users unique ID
     :param server_id: the servers unique ID
     """
+    # adds the user to the databse if they don't exist already
     if not user_exists(user_id):
         new_user(user_id)
 
-    if not portfolio_exists(user_id, server_id):
+    # adds the users balance to the server
+    if not balance_exists(user_id, server_id):
         cash_balance = "cash_balances." + str(server_id)
         collection.update_one({"_id": user_id}, {"$set": {cash_balance: default_balance}})
         print("Added server", server_id, "portfolio to user", user_id)
@@ -51,7 +53,6 @@ def delete_portfolio(user_id, server_id):
     Removes the users portfolio
     :param user_id: the users unique ID
     :param server_id: the servers unique ID
-    :param stock: the stock ticker symbol
     """
     portfolio = str(user_id) + ".portfolio." + str(server_id)
     collection.delete_one({portfolio})
@@ -66,6 +67,7 @@ def set_stock(user_id, server_id, stock, quantity):
     :param quantity: the number to set to
     """
     updated_stock = "portfolio." + str(server_id) + "." + stock
+    # removes the stock from the array if setting quantity to 0
     if quantity == 0:
         collection.update_one({"_id": user_id}, {"$unset": {updated_stock: quantity}})
     else:
@@ -81,12 +83,12 @@ def get_stock(user_id, server_id, stock):
     :param stock: the stock ticker symbol
     :return: the integer value of the users owned shared
     """
-    portfolio = str(user_id) + ".portfolio." + str(server_id)
     user = collection.find_one({"_id": user_id})
     try:
         portfolio = user['portfolio']
         server = portfolio[str(server_id)]
         return server[stock]
+    # KeyError means that the user doesn't own any of the stock
     except KeyError:
         return 0
 
@@ -110,7 +112,6 @@ def get_balance(user_id, server_id):
     :param server_id: the servers unique ID
     :return: the floating value of the users balance
     """
-    balance_to_find = str(user_id) + ".cash_balances." + str(server_id)
     user = collection.find_one({"_id": user_id})
     balance = user['cash_balances']
     return balance[str(server_id)]
@@ -127,39 +128,6 @@ def user_exists(user_id):
         return False
     else:
         return True
-
-
-def has_portfolio(user_id):
-    """
-    Checks if the user has a portfolio
-    :param user_id:the users unique ID
-    :return: boolean value
-    """
-    user = collection.find_one({"_id": user_id})
-    try:
-        portfolio = user['portfolio']
-        return True
-    except KeyError or TypeError:
-        return False
-
-
-def portfolio_exists(user_id, server_id):
-    """
-    Checks if the user already has a portfolio in the server
-    :param user_id: the users unique ID
-    :param server_id: the servers unique ID
-    :return: boolean value
-    """
-    if has_portfolio(user_id):
-        user = collection.find_one({"_id": user_id})
-        portfolio = user['portfolio']
-        try:
-            server = portfolio[str(server_id)]
-            return True
-        except KeyError or TypeError:
-            return False
-    else:
-        return False
 
 
 def balance_exists(user_id, server_id):

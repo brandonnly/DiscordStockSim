@@ -25,6 +25,7 @@ async def join(ctx):
         else:
             add_user(ctx.author.id, ctx.guild.id)
             await ctx.send('you are now in stonks kekw')
+    # type error means that no object for the users balance exists
     except TypeError:
         add_user(ctx.author.id, ctx.guild.id)
         await ctx.send('you are now in stonks kekw')
@@ -44,6 +45,7 @@ async def buy(ctx, stock_ticker, quantity):
     stock_ticker = stock_ticker.upper()
     quantity = int(quantity)
 
+    # checks if the stock is a valid symbol - get_price returns 0 if not valid
     if get_price(stock_ticker) == 0:
         await ctx.send("that stock doesn't exist 5head")
     else:
@@ -56,13 +58,15 @@ async def buy(ctx, stock_ticker, quantity):
             await ctx.send("You don't have the funds for that!")
         else:
             # sets the balance to current balance minus cost
-            set_balance(author, server, get_balance(author, server) - cost)
+            set_balance(author, server,  get_balance(author, server) - cost)
             # gives the user the quantity of stock
             try:
                 set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
+            # KeyError means that the user has never owned a stock so it adds one for them
             except KeyError:
                 add_portfolio(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) + quantity)
 
+            # lets the user know how much they bought at what price and their balance afterwards
             await ctx.send("You bought **{0}** shares of **{1}**, at **${2}** per share.".format(quantity, stock_ticker,
                                                                                                  stock_price))
             await balance(ctx)
@@ -82,6 +86,7 @@ async def sell(ctx, stock_ticker, quantity):
     stock_ticker = stock_ticker.upper()
     quantity = int(quantity)
 
+    # checks if the stock is a valid symbol - get_price returns 0 if not valid
     if get_price(stock_ticker) == 0:
         await ctx.send("that stock doesn't exist 5head")
     else:
@@ -91,13 +96,14 @@ async def sell(ctx, stock_ticker, quantity):
 
         # checks if stock will go into negative
         if (get_stock(author, server, stock_ticker) - quantity) < 0:
-            await ctx.send("You don't have that many shares of **{0}**.".format(stock_ticker))
+            await ctx.send("you don't have that many shares of **{0}** pepeHands".format(stock_ticker))
         else:
             # subtracts quantity of stock from the users inventory
             set_stock(author, server, stock_ticker, int(get_stock(author, server, stock_ticker)) - quantity)
             # adds the cost of the stocks to the users inventory
             set_balance(author, server, get_balance(author, server) + cost)
 
+            # lets the user know how much they bought at what price and their balance afterwards
             await ctx.send("You sold **{0}** shares of **{1}** at **${2}** per share.".format(quantity, stock_ticker,
                                                                                               stock_price))
             await balance(ctx)
@@ -131,14 +137,20 @@ async def portfolio(ctx):
     """
     try:
         users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
+        # message template
         message = "**{0}'s** portfolio for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
+        # loops through the users portfolio and adds them to the message
         for stock_ticker in users_portfolio:
             message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
         message = message + "```"
+
+        # check if the message has no stocks and is just the template
         if len(message) == 83:
             await ctx.send("you don't own anything sadge")
         else:
             await ctx.send(message)
+
+    # KeyError means that the portfolio doesn't exist at all
     except KeyError:
         await ctx.send("you don't own anything sadge")
 
