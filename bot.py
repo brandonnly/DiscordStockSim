@@ -131,7 +131,7 @@ async def price(ctx, stock_ticker):
 
 
 @bot.command()
-async def portfolio(ctx):
+async def stonks(ctx):
     """
     Returns an overview of your portfolio
     :param ctx: pass context
@@ -139,7 +139,7 @@ async def portfolio(ctx):
     try:
         users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
         # message template
-        message = "**{0}'s** portfolio for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
+        message = "**{0}'s** stonks for **{1}**:\n```".format(ctx.author.name, ctx.guild.name)
         # loops through the users portfolio and adds them to the message
         for stock_ticker in users_portfolio:
             message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
