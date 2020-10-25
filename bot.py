@@ -157,4 +157,39 @@ async def stonks(ctx):
         await ctx.send(no_stonks)
 
 
+@bot.command()
+async def portfolio(ctx):
+    """
+    Returns the users portfolio
+    :param ctx: pass context
+    """
+    # gets the users portfolio
+    users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
+
+    # portfolio variables
+    value = 0
+    quantity = 0
+    stocks = 0
+    cash_balance = round(get_balance(ctx.author.id, ctx.guild.id), 2)
+
+    # loop through users portfolio and add to counters
+    for stock_ticker in users_portfolio:
+        stock_quantity = users_portfolio[stock_ticker]
+
+        value += get_price(stock_ticker) * stock_quantity
+        quantity += stock_quantity
+        stocks += 1
+
+    # sends the users portfolio
+    message = "**{0}'s** portfolio for **{1}**:\n```py\n".format(ctx.author.name, ctx.guild.name)
+    message = message + "Portfolio Value = ${0} \n\nCash Balance = ${1} \nStonks Value = ${2}".format(cash_balance +
+                                                                                                      value,
+                                                                                                      cash_balance,
+                                                                                                      value)
+    message = message + "\n\nUnique Stonks Owned = {0} \nTotal Stonks Owned = {1}".format(stocks, quantity)
+    message = message + "```"
+    message = message + "\nTo view your individual stonks and their values use **s!stonks**"
+    await ctx.send(message)
+
+
 bot.run(BOT_TOKEN)
