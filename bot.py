@@ -135,7 +135,10 @@ async def portfolio(ctx):
         for stock_ticker in users_portfolio:
             message = message + "{0}: {1}\n".format(stock_ticker, users_portfolio[stock_ticker])
         message = message + "```"
-        await ctx.send(message)
+        if len(message) == 83:
+            await ctx.send("you don't own anything sadge")
+        else:
+            await ctx.send(message)
     except KeyError:
         await ctx.send("you don't own anything sadge")
 

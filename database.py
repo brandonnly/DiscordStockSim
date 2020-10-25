@@ -46,6 +46,17 @@ def add_portfolio(user_id, server_id, stock, quantity):
     collection.update_one({"_id": user_id}, {"$set": {portfolio: {stock: quantity}}})
 
 
+def delete_portfolio(user_id, server_id):
+    """
+    Removes the users portfolio
+    :param user_id: the users unique ID
+    :param server_id: the servers unique ID
+    :param stock: the stock ticker symbol
+    """
+    portfolio = str(user_id) + ".portfolio." + str(server_id)
+    collection.delete_one({portfolio})
+
+
 def set_stock(user_id, server_id, stock, quantity):
     """
     Sets the a new value to the users stock count of that share
@@ -55,8 +66,11 @@ def set_stock(user_id, server_id, stock, quantity):
     :param quantity: the number to set to
     """
     updated_stock = "portfolio." + str(server_id) + "." + stock
-    collection.update_one({"_id": user_id}, {"$set": {updated_stock: quantity}})
-    print("Set the stock of", user_id, "in", server_id, "to", quantity, "for stock", stock)
+    if quantity == 0:
+        collection.update_one({"_id": user_id}, {"$unset": {updated_stock: quantity}})
+    else:
+        collection.update_one({"_id": user_id}, {"$set": {updated_stock: quantity}})
+        print("Set the stock of", user_id, "in", server_id, "to", quantity, "for stock", stock)
 
 
 def get_stock(user_id, server_id, stock):
