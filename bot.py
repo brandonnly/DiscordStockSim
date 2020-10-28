@@ -11,7 +11,7 @@ from stocks import *
 bot = discord.ext.commands.Bot('s!')
 
 
-@bot.command()
+@bot.command(aliases=['Join', 'enter', 'Enter', 'play', 'Play'], ignore_extra=True)
 async def join(ctx):
     """
     Enters you into this servers stonks game
@@ -29,7 +29,7 @@ async def join(ctx):
         await ctx.send(joined_stonks)
 
 
-@bot.command()
+@bot.command(aliases=['Buy', 'BUY'], ignore_extra=True)
 async def buy(ctx, stock_ticker, quantity):
     """
     Performs a market buy of the quantity of the given stock
@@ -68,7 +68,7 @@ async def buy(ctx, stock_ticker, quantity):
             await balance(ctx)
 
 
-@bot.command()
+@bot.command(aliases=['Sell', 'SELL'], ignore_extra=True)
 async def sell(ctx, stock_ticker, quantity):
     """
     Performs a market sell of the quantity of the given stock
@@ -103,7 +103,7 @@ async def sell(ctx, stock_ticker, quantity):
             await balance(ctx)
 
 
-@bot.command()
+@bot.command(aliases=['Balance', 'bal', 'Bal'], ignore_extra=True)
 async def balance(ctx):
     """
     Returns your current balance
@@ -111,7 +111,7 @@ async def balance(ctx):
     await ctx.send("**Current Balance:** ${0}".format(round(get_balance(ctx.author.id, ctx.guild.id), 2)))
 
 
-@bot.command()
+@bot.command(ignore_extra=True)
 async def price(ctx, stock_ticker):
     """
     Returns the current share price of the given stock
@@ -124,7 +124,7 @@ async def price(ctx, stock_ticker):
         await ctx.send(current_stonk_value.format(stock_ticker, get_price(stock_ticker)))
 
 
-@bot.command()
+@bot.command(aliases=['stocks', 'stock'], ignore_extra=True)
 async def stonks(ctx):
     """
     Returns an overview of all your owned stonks
@@ -151,7 +151,7 @@ async def stonks(ctx):
         await ctx.send(no_stonks)
 
 
-@bot.command()
+@bot.command(ignore_extra=True)
 async def portfolio(ctx):
     """
     Returns the users portfolio
