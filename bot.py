@@ -15,7 +15,6 @@ bot = discord.ext.commands.Bot('s!')
 async def join(ctx):
     """
     Enters you into this servers stonks game
-    :param ctx: pass context
     """
     # checks if the user is already in the servers game
     try:
@@ -34,7 +33,6 @@ async def join(ctx):
 async def buy(ctx, stock_ticker, quantity):
     """
     Performs a market buy of the quantity of the given stock
-    :param ctx: pass context
     :param stock_ticker: the ticker symbol of the stock
     :param quantity: the integer quantity to buy
     """
@@ -74,7 +72,6 @@ async def buy(ctx, stock_ticker, quantity):
 async def sell(ctx, stock_ticker, quantity):
     """
     Performs a market sell of the quantity of the given stock
-    :param ctx: pass context
     :param stock_ticker: the ticker symbol of the stock
     :param quantity: the integer quantity to sell
     """
@@ -110,7 +107,6 @@ async def sell(ctx, stock_ticker, quantity):
 async def balance(ctx):
     """
     Returns your current balance
-    :param ctx: pass context
     """
     await ctx.send("**Current Balance:** ${0}".format(round(get_balance(ctx.author.id, ctx.guild.id), 2)))
 
@@ -119,7 +115,6 @@ async def balance(ctx):
 async def price(ctx, stock_ticker):
     """
     Returns the current share price of the given stock
-    :param ctx: pass context
     :param stock_ticker: the ticker symbol of the stock to check
     """
     stock_ticker = stock_ticker.upper()
@@ -133,7 +128,6 @@ async def price(ctx, stock_ticker):
 async def stonks(ctx):
     """
     Returns an overview of all your owned stonks
-    :param ctx: pass context
     """
     try:
         users_portfolio = get_portfolio(ctx.author.id, ctx.guild.id)
@@ -161,7 +155,6 @@ async def stonks(ctx):
 async def portfolio(ctx):
     """
     Returns the users portfolio
-    :param ctx: pass context
     """
 
     author_id = ctx.author.id
